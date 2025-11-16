@@ -1,0 +1,3631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Scan Security | Advanced Web Security Scanner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* ===== VARIABLES & RESET ===== */
+        :root {
+            --primary: #1E40AF;
+            --primary-dark: #1E3A8A;
+            --primary-light: #3B82F6;
+            --secondary: #0F172A;
+            --accent: #0EA5E9;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --success: #10B981;
+            --bg-primary: #000000;
+            --bg-secondary: #0F172A;
+            --bg-tertiary: #1E293B;
+            --text-primary: #FFFFFF;
+            --text-secondary: #CBD5E1;
+            --text-muted: #64748B;
+            --border: #334155;
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            --gradient-dark: linear-gradient(135deg, var(--secondary) 0%, var(--bg-primary) 100%);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            width: 100%;
+        }
+
+        /* ===== HEADER & NAVIGATION ===== */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: clamp(1rem, 3vw, 2rem);
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .auth-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+        }
+
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+            background: var(--gradient-dark);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: clamp(1.5rem, 4vw, 3rem);
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stat-number {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+        }
+
+        /* ===== FEATURES SECTION ===== */
+        .features {
+            padding: clamp(3rem, 8vw, 5rem) 0;
+            width: 100%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            color: var(--text-secondary);
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard {
+            padding: 2rem 0;
+            display: none;
+            width: 100%;
+            flex: 1;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: var(--text-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .stat-content h3 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-trend.up {
+            color: var(--success);
+        }
+
+        .stat-trend.down {
+            color: var(--danger);
+        }
+
+        .scans-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            width: 100%;
+        }
+
+        .scans-section .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* ===== PAGES ===== */
+        .page {
+            display: none;
+            padding: 2rem 0;
+            min-height: 70vh;
+            width: 100%;
+            flex: 1;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        /* ===== SCAN CONFIGURATION ===== */
+        .scan-configuration {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            border: 1px solid var(--border);
+            width: 100%;
+        }
+
+        .config-section {
+            margin-bottom: 2rem;
+        }
+
+        .scan-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+            gap: 1rem;
+        }
+
+        .scan-type-option {
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .scan-type-option.active {
+            border-color: var(--primary);
+            background: rgba(30, 64, 175, 0.1);
+        }
+
+        .option-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* ===== FORM STYLES ===== */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        /* ===== REPORTS ===== */
+        .reports-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            border: 1px solid var(--border);
+            width: 100%;
+        }
+
+        .reports-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .report-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: clamp(1rem, 3vw, 1.5rem);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .report-date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .report-summary {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .vuln-count {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .vuln-count.critical { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .vuln-count.high { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .vuln-count.medium { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .vuln-count.low { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+
+        .report-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* ===== REPORT DETAIL ===== */
+        .report-detail {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            border: 1px solid var(--border);
+            width: 100%;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: clamp(1rem, 3vw, 2rem);
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: clamp(0.8rem, 2vw, 1rem);
+        }
+
+        .report-summary {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            min-width: 80px;
+        }
+
+        .summary-item.critical { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); }
+        .summary-item.high { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); }
+        .summary-item.medium { background: rgba(245, 158, 11, 0.2); border: 1px solid var(--warning); }
+        .summary-item.low { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--success); }
+
+        .summary-count {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-item.critical .summary-count { color: var(--danger); }
+        .summary-item.high .summary-count { color: var(--danger); }
+        .summary-item.medium .summary-count { color: var(--warning); }
+        .summary-item.low .summary-count { color: var(--success); }
+
+        .vulnerabilities-list {
+            margin-top: 2rem;
+        }
+
+        .vulnerability-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: clamp(1rem, 3vw, 1.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .vulnerability-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .vulnerability-severity {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .severity-critical, .severity-high { background: var(--danger); color: white; }
+        .severity-medium { background: var(--warning); color: var(--bg-primary); }
+        .severity-low { background: var(--success); color: white; }
+
+        .vulnerability-description {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .vulnerability-solution h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--border);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* ===== AUTH TABS ===== */
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem clamp(1rem, 3vw, 2rem);
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .auth-tab {
+            display: none;
+        }
+
+        .auth-tab.active {
+            display: block;
+        }
+
+        /* ===== USER INFO ===== */
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            min-width: 200px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1001;
+        }
+
+        .user-info:hover .user-dropdown {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            cursor: pointer;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .dropdown-item.logout {
+            color: var(--danger);
+        }
+
+        /* ===== SCANNER ANIMATION ===== */
+        .scanner-animation {
+            width: min(300px, 90%);
+            height: 200px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            margin: 2rem auto 0;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .vulnerability-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .vulnerability-dot.high { background: var(--danger); }
+        .vulnerability-dot.medium { background: var(--warning); }
+        .vulnerability-dot.low { background: var(--success); }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ===== TOAST NOTIFICATIONS ===== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            min-width: min(300px, 90vw);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 3000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.warning { border-left: 4px solid var(--warning); }
+        .toast.info { border-left: 4px solid var(--primary); }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* ===== DOWNLOAD MODAL ===== */
+        .download-format {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .download-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .download-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .download-number {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .download-details {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 480px) {
+            .download-details {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .download-detail {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .download-detail-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .download-detail-value {
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .download-items {
+            margin-top: 1rem;
+        }
+
+        .download-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .download-item:last-child {
+            border-bottom: none;
+        }
+
+        /* ===== CONTENT PAGES ===== */
+        .content-page {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: clamp(1.5rem, 4vw, 3rem);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .content-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            text-align: center;
+        }
+
+        .content-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+        }
+
+        .price-card {
+            background: var(--bg-primary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .price-card.featured {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .price-card.featured .btn {
+            background: var(--gradient-primary);
+        }
+
+        .price-amount {
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: bold;
+            color: var(--primary);
+            margin: 1rem 0;
+        }
+
+        .price-period {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .team-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            text-align: center;
+        }
+
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            text-align: center;
+        }
+
+        .contact-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* ===== SETTINGS PAGE ===== */
+        .settings-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: clamp(1.5rem, 4vw, 2rem);
+            border: 1px solid var(--border);
+            width: 100%;
+        }
+
+        .settings-section {
+            margin-bottom: 2rem;
+        }
+
+        .settings-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .settings-label {
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        /* ===== TOGGLE SWITCH ===== */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: var(--bg-tertiary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-switch.active {
+            background-color: var(--primary);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(26px);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 3rem 0 1rem;
+            margin-top: auto;
+            width: 100%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+        }
+
+        .footer-section a {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-secondary);
+                flex-direction: column;
+                padding: 1rem;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .hero-buttons .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .meta-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .report-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .report-summary {
+                justify-content: center;
+            }
+
+            .scan-types {
+                grid-template-columns: 1fr;
+            }
+            
+            .feature-actions {
+                flex-direction: column;
+            }
+            
+            .feature-actions .btn {
+                width: 100%;
+            }
+            
+            .report-actions {
+                flex-direction: column;
+            }
+            
+            .report-actions .btn {
+                width: 100%;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .header-actions .btn {
+                width: 100%;
+            }
+
+            .price-card.featured {
+                transform: none;
+            }
+
+            .user-dropdown {
+                position: fixed;
+                top: 70px;
+                right: 1rem;
+                left: 1rem;
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .stat-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .report-summary {
+                justify-content: space-between;
+            }
+            
+            .summary-item {
+                flex: 1;
+                min-width: 70px;
+            }
+        }
+
+        /* ===== EMPTY STATES ===== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .scan-progress {
+            margin: 2rem 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .scan-results {
+            text-align: center;
+        }
+
+        .result-summary {
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .result-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .result-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .result-value.safe {
+            color: var(--success);
+        }
+        
+        /* ===== FORGOT PASSWORD ===== */
+        .forgot-password {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .forgot-password a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        
+        /* ===== SOCIAL LOGIN ===== */
+        .social-login {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .social-login-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .social-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .social-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .social-btn:hover {
+            border-color: var(--primary);
+            background: var(--bg-secondary);
+        }
+        
+        .social-btn.google {
+            color: #DB4437;
+        }
+        
+        .social-btn.facebook {
+            color: #4267B2;
+        }
+        
+        .social-btn.github {
+            color: #333;
+        }
+
+        /* ===== SCAN ITEM STYLES ===== */
+        .scan-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        .scan-item:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .scan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .scan-url {
+            font-weight: 500;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .scan-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .scan-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-badge.completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-badge.running {
+            background: rgba(14, 165, 233, 0.2);
+            color: var(--accent);
+        }
+
+        .status-badge.failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .scan-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .scan-progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .scan-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .scan-vulnerabilities {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .vuln-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .vuln-badge.critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .vuln-badge.high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .vuln-badge.medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .vuln-badge.low {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="#" class="logo" onclick="cyberGuardApp.showLandingPage()">
+                    <i class="fas fa-shield-virus"></i>
+                    <span>Cyber Scan Security</span>
+                </a>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#features" onclick="cyberGuardApp.showFeaturesPage()">Features</a></li>
+                    <li><a href="#pricing" onclick="cyberGuardApp.showPricingPage()">Pricing</a></li>
+                    <li><a href="#about" onclick="cyberGuardApp.showAboutPage()">About</a></li>
+                    <li><a href="#contact" onclick="cyberGuardApp.showContactPage()">Contact</a></li>
+                </ul>
+                <div class="auth-container">
+                    <div id="userInfo" class="user-info">
+                        <div id="userAvatar" class="user-avatar">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <span id="userName" class="user-name"></span>
+                        <div class="user-dropdown">
+                            <a href="#settings" class="dropdown-item" onclick="cyberGuardApp.showSettings()">
+                                <i class="fas fa-cog"></i> Settings
+                            </a>
+                            <button id="logoutBtn" class="dropdown-item logout">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </div>
+                    </div>
+                    <button id="authButton" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section id="heroSection" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <span class="gradient-text">Cyber Scan Security</span> Scanner
+                    </h1>
+                    <p class="hero-description">
+                        Advanced web application vulnerability scanning with real-time threat detection, 
+                        comprehensive reporting, and enterprise-grade security analysis.
+                    </p>
+                    <div class="hero-buttons">
+                        <button id="heroSignUp" class="btn btn-primary btn-large">
+                            <i class="fas fa-rocket"></i> Start Free Scan
+                        </button>
+                        <button class="btn btn-secondary btn-large">
+                            <i class="fas fa-play-circle"></i> Watch Demo
+                        </button>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <div class="stat-number">10K+</div>
+                            <div class="stat-label">Scans Completed</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Vulnerabilities Found</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">99.9%</div>
+                            <div class="stat-label">Accuracy Rate</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="scanner-animation">
+                        <div class="scan-line"></div>
+                        <div class="vulnerability-dot high" style="top: 20%; left: 30%;"></div>
+                        <div class="vulnerability-dot medium" style="top: 60%; left: 70%;"></div>
+                        <div class="vulnerability-dot low" style="top: 40%; left: 50%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Advanced Security Features</h2>
+                    <p class="section-description">
+                        Comprehensive vulnerability detection with cutting-edge security analysis
+                    </p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card" data-feature="scan">
+                        <div class="feature-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <h3>Advanced Scanning</h3>
+                        <p>Deep vulnerability assessment with 50+ security checks including OWASP Top 10</p>
+                        <div class="feature-actions">
+                            <button class="btn btn-outline quick-scan-btn">
+                                <i class="fas fa-bolt"></i> Quick Scan
+                            </button>
+                            <button class="btn btn-primary full-scan-btn">
+                                <i class="fas fa-shield-alt"></i> Full Scan
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card" data-feature="reports">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h3>Detailed Reports</h3>
+                        <p>Comprehensive vulnerability reports with severity ratings and remediation guidance</p>
+                        <button class="btn btn-outline view-reports-btn">
+                            <i class="fas fa-file-alt"></i> View Reports
+                        </button>
+                    </div>
+                    
+                    <div class="feature-card" data-feature="history">
+                        <div class="feature-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h3>Scan History</h3>
+                        <p>Track security improvements over time with detailed scan history and trends</p>
+                        <button class="btn btn-outline view-history-btn">
+                            <i class="fas fa-clock"></i> View History
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="dashboard">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">
+                        <i class="fas fa-tachometer-alt"></i> Security Dashboard
+                    </h1>
+                    <div class="dashboard-actions">
+                        <button id="newScanBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> New Scan
+                        </button>
+                        <button id="quickScanBtn" class="btn btn-secondary">
+                            <i class="fas fa-bolt"></i> Quick Scan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistics Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalScans">0</h3>
+                            <p>Total Scans</p>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> 12%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="vulnerabilitiesFound">0</h3>
+                            <p>Vulnerabilities Found</p>
+                            <div class="stat-trend down">
+                                <i class="fas fa-arrow-down"></i> 8%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="sitesMonitored">0</h3>
+                            <p>Sites Monitored</p>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> 5%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="scanSuccessRate">0%</h3>
+                            <p>Success Rate</p>
+                            <div class="stat-trend up">
+                                <i class="fas fa-arrow-up"></i> 3%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Scans -->
+                <div class="scans-section">
+                    <div class="section-header">
+                        <h2>Recent Security Scans</h2>
+                        <button id="viewAllScans" class="btn btn-outline">
+                            View All <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div id="scansList" class="scans-list">
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <h3>No Scans Yet</h3>
+                            <p>Start your first security scan to identify vulnerabilities</p>
+                            <button class="btn btn-primary start-scan-btn">
+                                <i class="fas fa-play"></i> Start First Scan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Pages -->
+        <div id="contentPages">
+            <!-- Features Page -->
+            <section id="featuresPage" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="btn btn-back" onclick="cyberGuardApp.showLandingPage()">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </button>
+                        <h1>Features</h1>
+                    </div>
+
+                    <div class="content-page">
+                        <h2>Comprehensive Security Scanning Solutions</h2>
+                        <p>Our platform offers enterprise-grade security scanning capabilities with advanced features designed for modern web applications.</p>
+                        
+                        <div class="content-grid">
+                            <div class="content-card">
+                                <i class="fas fa-shield-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                                <h3>Advanced Vulnerability Detection</h3>
+                                <p>Detect over 50+ vulnerability types including OWASP Top 10 with advanced scanning algorithms.</p>
+                            </div>
+                            
+                            <div class="content-card">
+                                <i class="fas fa-file-pdf" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                                <h3>Detailed Reporting</h3>
+                                <p>Generate comprehensive PDF reports with severity ratings, remediation guidance, and executive summaries.</p>
+                            </div>
+                            
+                            <div class="content-card">
+                                <i class="fas fa-history" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                                <h3>Scan History & Trends</h3>
+                                <p>Track security improvements over time with detailed scan history and vulnerability trend analysis.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pricing Page -->
+            <section id="pricingPage" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="btn btn-back" onclick="cyberGuardApp.showLandingPage()">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </button>
+                        <h1>Pricing</h1>
+                    </div>
+
+                    <div class="content-page">
+                        <h2>Choose Your Security Plan</h2>
+                        <p>Select the perfect plan for your security needs. All plans include core scanning features.</p>
+                        
+                        <div class="content-grid">
+                            <div class="price-card">
+                                <h3>Free</h3>
+                                <div class="price-amount">$0</div>
+                                <div class="price-period">forever</div>
+                                <ul class="feature-list">
+                                    <li>5 Scans per month</li>
+                                    <li>Basic Vulnerability Detection</li>
+                                    <li>PDF Report Generation</li>
+                                    <li>Email Support</li>
+                                </ul>
+                                <button class="btn btn-outline btn-block pricing-plan-btn" data-plan="free">Get Started</button>
+                            </div>
+                            
+                            <div class="price-card featured">
+                                <h3>Professional</h3>
+                                <div class="price-amount">$99</div>
+                                <div class="price-period">per month</div>
+                                <ul class="feature-list">
+                                    <li>Unlimited Scans</li>
+                                    <li>Advanced Vulnerability Detection</li>
+                                    <li>Detailed PDF Reports</li>
+                                    <li>Priority Support</li>
+                                </ul>
+                                <button class="btn btn-primary btn-block pricing-plan-btn" data-plan="professional">Start Free Trial</button>
+                            </div>
+                            
+                            <div class="price-card">
+                                <h3>Enterprise</h3>
+                                <div class="price-amount">$299</div>
+                                <div class="price-period">per month</div>
+                                <ul class="feature-list">
+                                    <li>Unlimited Everything</li>
+                                    <li>Advanced Penetration Testing</li>
+                                    <li>Custom Report Templates</li>
+                                    <li>24/7 Premium Support</li>
+                                </ul>
+                                <button class="btn btn-outline btn-block pricing-plan-btn" data-plan="enterprise">Contact Sales</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Page -->
+            <section id="aboutPage" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="btn btn-back" onclick="cyberGuardApp.showLandingPage()">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </button>
+                        <h1>About Us</h1>
+                    </div>
+
+                    <div class="content-page">
+                        <h2>Our Mission</h2>
+                        <p>Cyber Scan Security was founded with a simple mission: to make web application security accessible to everyone. We believe that security shouldn't be complicated or expensive.</p>
+                        
+                        <h3 style="margin-top: 2rem;">Our Team</h3>
+                        <div class="team-grid">
+                            <div class="team-card">
+                                <div class="team-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h4>John Smith</h4>
+                                <p style="color: var(--primary); margin-bottom: 1rem;">CEO & Founder</p>
+                                <p>Former security researcher with 10+ years of experience in web application security.</p>
+                            </div>
+                            
+                            <div class="team-card">
+                                <div class="team-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h4>Sarah Johnson</h4>
+                                <p style="color: var(--primary); margin-bottom: 1rem;">CTO</p>
+                                <p>Security architect specializing in vulnerability assessment and penetration testing.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Page -->
+            <section id="contactPage" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="btn btn-back" onclick="cyberGuardApp.showLandingPage()">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </button>
+                        <h1>Contact Us</h1>
+                    </div>
+
+                    <div class="content-page">
+                        <h2>Get In Touch</h2>
+                        <p>Have questions or need support? We're here to help you secure your applications.</p>
+                        
+                        <div class="contact-info">
+                            <div class="contact-card">
+                                <i class="fas fa-envelope"></i>
+                                <h3>Email</h3>
+                                <p>support@cyberscansecurity.com</p>
+                                <p>We respond within 24 hours</p>
+                            </div>
+                            
+                            <div class="contact-card">
+                                <i class="fas fa-phone"></i>
+                                <h3>Phone</h3>
+                                <p>+1 (555) 123-4567</p>
+                                <p>Mon-Fri, 9AM-6PM EST</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Scan Pages -->
+        <div id="scanPages">
+            <!-- Advanced Scan Page -->
+            <section id="advancedScanPage" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="btn btn-back" onclick="cyberGuardApp.showDashboard()">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </button>
+                        <h1>Advanced Security Scan</h1>
+                    </div>
+
+                    <div class="scan-configuration">
+                        <div class="config-section">
+                            <h3>Target Configuration</h3>
+                            <div class="form-group">
+                                <label for="targetUrl">Target URL</label>
+                                <input type="url" id="targetUrl" class="form-control" 
+                                       placeholder="https://example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <h3>Scan Type</h3>
+                            <div class="scan-types">
+                                <div class="scan-type-option active" data-type="quick">
+                                    <div class="option-icon">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <h4>Quick Scan</h4>
+                                    <p>Basic vulnerability check (1-2 minutes)</p>
+                                </div>
+                                
+                                <div class="scan-type-option" data-type="standard">
+                                    <div class="option-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <h4>Standard Scan</h4>
+                                    <p>Comprehensive security analysis (5-10 minutes)</p>
+                                </div>
+                                
+                                <div class="scan-type-option" data-type="deep">
+                                    <div class="option-icon">
+                                        <i class="fas fa-search-plus"></i>
+                                    </div>
+                                    <h4>Deep Scan</h4>
+                                    <p>Full penetration testing (15-30 minutes)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-secondary" onclick="cyberGuardApp.showDashboard()">Cancel</button>
+                            <button id="startAdvancedScan" class="btn btn-primary">
+                                <i class="fas fa-play"></i> Start Security Scan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Page -->
+            <section id="reportsPage" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="btn btn-back" onclick="cyberGuardApp.showDashboard()">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </button>
+                        <h1>Security Reports</h1>
+                        <div class="header-actions">
+                            <button id="exportAllReports" class="btn btn-outline">
+                                <i class="fas fa-download"></i> Export All
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="reports-container">
+                        <div id="reportsList" class="reports-list">
+                            <!-- Reports will be dynamically loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Report Detail Page -->
+            <section id="reportDetailPage" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="btn btn-back" onclick="cyberGuardApp.showReports()">
+                            <i class="fas fa-arrow-left"></i> Back to Reports
+                        </button>
+                        <h1>Security Report</h1>
+                        <div class="header-actions">
+                            <button class="btn btn-primary" id="downloadReport">
+                                <i class="fas fa-download"></i> Download PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="report-detail">
+                        <div class="report-header">
+                            <div class="report-meta">
+                                <h2 id="reportTitle">Security Assessment Report</h2>
+                                <div class="meta-info">
+                                    <span class="meta-item">
+                                        <i class="fas fa-globe"></i>
+                                        <span id="reportUrl">https://example.com</span>
+                                    </span>
+                                    <span class="meta-item">
+                                        <i class="fas fa-calendar"></i>
+                                        <span id="reportDate">Nov 15, 2023</span>
+                                    </span>
+                                    <span class="meta-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span id="reportDuration">15 minutes</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="report-summary">
+                                <div class="summary-item critical">
+                                    <div class="summary-count" id="criticalCount">0</div>
+                                    <div class="summary-label">Critical</div>
+                                </div>
+                                <div class="summary-item high">
+                                    <div class="summary-count" id="highCount">0</div>
+                                    <div class="summary-label">High</div>
+                                </div>
+                                <div class="summary-item medium">
+                                    <div class="summary-count" id="mediumCount">0</div>
+                                    <div class="summary-label">Medium</div>
+                                </div>
+                                <div class="summary-item low">
+                                    <div class="summary-count" id="lowCount">0</div>
+                                    <div class="summary-label">Low</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="vulnerabilities-list">
+                            <h3>Identified Vulnerabilities</h3>
+                            <div id="vulnerabilitiesContainer">
+                                <!-- Vulnerabilities will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scan History Page -->
+            <section id="scanHistoryPage" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="btn btn-back" onclick="cyberGuardApp.showDashboard()">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </button>
+                        <h1>Scan History</h1>
+                    </div>
+
+                    <div class="reports-container">
+                        <div id="historyList" class="reports-list">
+                            <!-- Scan history will be dynamically loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Page -->
+            <section id="settingsPage" class="page">
+                <div class="container">
+                    <div class="page-header">
+                        <button class="btn btn-back" onclick="cyberGuardApp.showDashboard()">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </button>
+                        <h1>Settings</h1>
+                    </div>
+
+                    <div class="settings-container">
+                        <div class="settings-section">
+                            <h2 class="settings-title">Scan Configuration</h2>
+                            <div class="settings-grid">
+                                <div class="settings-item">
+                                    <span class="settings-label">Auto-scan enabled</span>
+                                    <div class="toggle-switch active" data-setting="autoScan"></div>
+                                </div>
+                                <div class="settings-item">
+                                    <span class="settings-label">Email notifications</span>
+                                    <div class="toggle-switch active" data-setting="emailNotifications"></div>
+                                </div>
+                                <div class="settings-item">
+                                    <span class="settings-label">Dark mode</span>
+                                    <div class="toggle-switch active" data-setting="darkMode"></div>
+                                </div>
+                                <div class="settings-item">
+                                    <span class="settings-label">Advanced scanning</span>
+                                    <div class="toggle-switch" data-setting="advancedScanning"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h2 class="settings-title">Account Settings</h2>
+                            <div class="settings-grid">
+                                <div class="settings-item">
+                                    <span class="settings-label">Two-factor authentication</span>
+                                    <div class="toggle-switch" data-setting="twoFactorAuth"></div>
+                                </div>
+                                <div class="settings-item">
+                                    <span class="settings-label">Session timeout</span>
+                                    <select class="form-control" style="width: auto; max-width: 150px;">
+                                        <option value="15">15 minutes</option>
+                                        <option value="30" selected>30 minutes</option>
+                                        <option value="60">1 hour</option>
+                                        <option value="120">2 hours</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h2 class="settings-title">Notification Preferences</h2>
+                            <div class="settings-grid">
+                                <div class="settings-item">
+                                    <span class="settings-label">Scan completion notifications</span>
+                                    <div class="toggle-switch active" data-setting="scanCompletionNotif"></div>
+                                </div>
+                                <div class="settings-item">
+                                    <span class="settings-label">Vulnerability alerts</span>
+                                    <div class="toggle-switch active" data-setting="vulnerabilityAlerts"></div>
+                                </div>
+                                <div class="settings-item">
+                                    <span class="settings-label">Weekly security reports</span>
+                                    <div class="toggle-switch" data-setting="weeklyReports"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-primary" onclick="cyberGuardApp.saveSettings()">Save Settings</button>
+                            <button class="btn btn-outline" onclick="cyberGuardApp.resetSettings()">Reset to Default</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to Cyber Scan Security</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs">
+                    <button class="tab-btn active" data-tab="login">Sign In</button>
+                    <button class="tab-btn" data-tab="register">Sign Up</button>
+                </div>
+
+                <div id="loginTab" class="auth-tab active">
+                    <form id="loginForm" class="auth-form">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="loginEmail" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="loginPassword" class="form-control" required>
+                        </div>
+                        <div class="forgot-password">
+                            <a href="#" id="forgotPasswordLink">Forgot your password?</a>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </button>
+                    </form>
+                    
+                    <div class="social-login">
+                        <div class="social-login-title">Or sign in with</div>
+                        <div class="social-buttons">
+                            <button class="social-btn google" onclick="cyberGuardApp.socialLogin('google')">
+                                <i class="fab fa-google"></i> Google
+                            </button>
+                            <button class="social-btn facebook" onclick="cyberGuardApp.socialLogin('facebook')">
+                                <i class="fab fa-facebook-f"></i> Facebook
+                            </button>
+                            <button class="social-btn github" onclick="cyberGuardApp.socialLogin('github')">
+                                <i class="fab fa-github"></i> GitHub
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="registerTab" class="auth-tab">
+                    <form id="registerForm" class="auth-form">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="registerName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="registerEmail" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="registerPassword" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password</label>
+                            <input type="password" id="registerConfirmPassword" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </button>
+                    </form>
+                    
+                    <div class="social-login">
+                        <div class="social-login-title">Or sign up with</div>
+                        <div class="social-buttons">
+                            <button class="social-btn google" onclick="cyberGuardApp.socialLogin('google')">
+                                <i class="fab fa-google"></i> Google
+                            </button>
+                            <button class="social-btn facebook" onclick="cyberGuardApp.socialLogin('facebook')">
+                                <i class="fab fa-facebook-f"></i> Facebook
+                            </button>
+                            <button class="social-btn github" onclick="cyberGuardApp.socialLogin('github')">
+                                <i class="fab fa-github"></i> GitHub
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Forgot Password Tab -->
+                <div id="forgotPasswordTab" class="auth-tab">
+                    <form id="forgotPasswordForm" class="auth-form">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="forgotPasswordEmail" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-key"></i> Reset Password
+                        </button>
+                    </form>
+                    <div class="forgot-password">
+                        <a href="#" id="backToLoginLink">Back to Sign In</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Scan Modal -->
+    <div id="quickScanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Quick Security Scan</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="quickScanUrl">Target URL</label>
+                    <input type="url" id="quickScanUrl" class="form-control" 
+                           placeholder="https://example.com" required>
+                </div>
+                <div class="scan-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">Initializing...</div>
+                </div>
+                <div class="scan-results" style="display: none;">
+                    <h3>Scan Complete!</h3>
+                    <div class="result-summary">
+                        <div class="result-item">
+                            <span class="result-label">Status:</span>
+                            <span class="result-value safe">Secure</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Vulnerabilities:</span>
+                            <span class="result-value">0 found</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-block view-full-report">
+                        View Full Report
+                    </button>
+                </div>
+                <div class="form-actions">
+                    <button id="startQuickScan" class="btn btn-primary btn-block">
+                        <i class="fas fa-play"></i> Start Scan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download Modal -->
+    <div id="downloadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Download Security Report</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="download-format">
+                    <div class="download-header">
+                        <div class="download-title">Security Scan Report</div>
+                        <div class="download-number">#REP-<span id="reportNumber">001</span></div>
+                    </div>
+                    <div class="download-details">
+                        <div class="download-detail">
+                            <span class="download-detail-label">Report Date:</span>
+                            <span class="download-detail-value" id="orderDate">November 15, 2023</span>
+                        </div>
+                        <div class="download-detail">
+                            <span class="download-detail-label">Customer:</span>
+                            <span class="download-detail-value" id="orderCustomer">John Doe</span>
+                        </div>
+                        <div class="download-detail">
+                            <span class="download-detail-label">Target URL:</span>
+                            <span class="download-detail-value" id="orderUrl">https://example.com</span>
+                        </div>
+                        <div class="download-detail">
+                            <span class="download-detail-label">Scan Type:</span>
+                            <span class="download-detail-value" id="orderScanType">Advanced</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="downloadFileName">File Name</label>
+                        <input type="text" id="downloadFileName" class="form-control" value="security-report">
+                    </div>
+                    <div class="form-actions" style="margin-top: 1.5rem;">
+                        <button class="btn btn-primary" id="confirmDownload">Download PDF</button>
+                        <button class="btn btn-outline" id="cancelDownload">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <i class="fas fa-shield-virus"></i>
+                        Cyber Scan Security
+                    </div>
+                    <p>Advanced web application security scanning for modern development teams.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <a href="#features" onclick="cyberGuardApp.showFeaturesPage()">Features</a>
+                    <a href="#pricing" onclick="cyberGuardApp.showPricingPage()">Pricing</a>
+                    <a href="#">API</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <a href="#about" onclick="cyberGuardApp.showAboutPage()">About</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Careers</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <a href="#">Documentation</a>
+                    <a href="#contact" onclick="cyberGuardApp.showContactPage()">Contact</a>
+                    <a href="#">Status</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Cyber Scan Security. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // CyberGuard Application Controller
+        class CyberGuardApp {
+            constructor() {
+                this.currentUser = null;
+                this.currentReportId = null;
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.checkAuthStatus();
+                this.loadInitialData();
+            }
+
+            bindEvents() {
+                // Authentication
+                document.getElementById('authButton').addEventListener('click', () => this.toggleAuthModal());
+                document.getElementById('logoutBtn').addEventListener('click', () => this.handleLogout());
+                document.getElementById('heroSignUp').addEventListener('click', () => this.showAuthModal('register'));
+
+                // Auth forms
+                document.getElementById('loginForm').addEventListener('submit', (e) => this.handleLogin(e));
+                document.getElementById('registerForm').addEventListener('submit', (e) => this.handleRegister(e));
+                document.getElementById('forgotPasswordForm').addEventListener('submit', (e) => this.handleForgotPassword(e));
+
+                // Forgot password links
+                document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.switchAuthTab('forgotPassword');
+                });
+                document.getElementById('backToLoginLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.switchAuthTab('login');
+                });
+
+                // Modal controls
+                document.querySelectorAll('.modal-close').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.closeModal(e.target.closest('.modal')));
+                });
+
+                // Tab switching
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.switchAuthTab(e.target.dataset.tab));
+                });
+
+                // Quick scan
+                document.querySelector('.quick-scan-btn').addEventListener('click', () => this.startQuickScan());
+                document.getElementById('quickScanBtn').addEventListener('click', () => this.startQuickScan());
+                document.getElementById('startQuickScan').addEventListener('click', () => this.executeQuickScan());
+
+                // Feature navigation
+                document.querySelector('.full-scan-btn').addEventListener('click', () => this.showAdvancedScan());
+                document.querySelector('.view-reports-btn').addEventListener('click', () => this.showReports());
+                document.querySelector('.view-history-btn').addEventListener('click', () => this.showScanHistory());
+
+                // Scan controls
+                document.getElementById('newScanBtn').addEventListener('click', () => this.showAdvancedScan());
+                document.getElementById('startAdvancedScan').addEventListener('click', () => this.startAdvancedScan());
+
+                // Report actions
+                document.getElementById('downloadReport').addEventListener('click', () => this.downloadCurrentReport());
+                document.getElementById('exportAllReports').addEventListener('click', () => this.exportAllReports());
+
+                // Scan type selection
+                document.querySelectorAll('.scan-type-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        document.querySelectorAll('.scan-type-option').forEach(opt => opt.classList.remove('active'));
+                        option.classList.add('active');
+                    });
+                });
+
+                // Download buttons
+                document.getElementById('confirmDownload').addEventListener('click', () => this.confirmDownload());
+                document.getElementById('cancelDownload').addEventListener('click', () => this.closeModal(document.getElementById('downloadModal')));
+
+                // Close modals on outside click
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) this.closeModal(modal);
+                    });
+                });
+
+                // View all scans
+                document.getElementById('viewAllScans').addEventListener('click', () => this.showScanHistory());
+
+                // Mobile menu
+                document.getElementById('mobileMenuBtn').addEventListener('click', () => this.toggleMobileMenu());
+
+                // Settings toggle switches
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    toggle.addEventListener('click', () => {
+                        toggle.classList.toggle('active');
+                        const setting = toggle.dataset.setting;
+                        const isActive = toggle.classList.contains('active');
+                        this.saveSetting(setting, isActive);
+                    });
+                });
+
+                // Pricing plan buttons
+                document.querySelectorAll('.pricing-plan-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const plan = btn.dataset.plan;
+                        this.selectPricingPlan(plan);
+                    });
+                });
+            }
+
+            async loadInitialData() {
+                if (this.currentUser) {
+                    await this.loadUserScans();
+                    await this.loadUserReports();
+                }
+            }
+
+            // Authentication Methods
+            async handleLogin(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+
+                try {
+                    const users = JSON.parse(localStorage.getItem('cyberguard_users') || '[]');
+                    const user = users.find(u => u.email === email && u.password === password);
+                    
+                    if (user) {
+                        this.currentUser = user;
+                        localStorage.setItem('cyberguard_currentUser', JSON.stringify(user));
+                        this.showDashboard();
+                        this.closeModal(document.getElementById('authModal'));
+                        this.showToast(`Welcome back, ${user.name}!`, 'success');
+                    } else {
+                        this.showToast('Invalid email or password', 'error');
+                    }
+                } catch (error) {
+                    this.showToast('Login failed. Please try again.', 'error');
+                }
+            }
+
+            async handleRegister(e) {
+                e.preventDefault();
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+                if (password !== confirmPassword) {
+                    this.showToast('Passwords do not match', 'error');
+                    return;
+                }
+
+                try {
+                    const users = JSON.parse(localStorage.getItem('cyberguard_users') || '[]');
+                    
+                    if (users.find(u => u.email === email)) {
+                        this.showToast('User with this email already exists', 'error');
+                        return;
+                    }
+
+                    const newUser = {
+                        id: 'user-' + Date.now(),
+                        name,
+                        email,
+                        password,
+                        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1E40AF&color=fff`,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    users.push(newUser);
+                    localStorage.setItem('cyberguard_users', JSON.stringify(users));
+                    
+                    this.currentUser = newUser;
+                    localStorage.setItem('cyberguard_currentUser', JSON.stringify(newUser));
+                    this.showDashboard();
+                    this.closeModal(document.getElementById('authModal'));
+                    this.showToast(`Account created successfully! Welcome, ${name}`, 'success');
+                } catch (error) {
+                    this.showToast('Registration failed. Please try again.', 'error');
+                }
+            }
+
+            async handleForgotPassword(e) {
+                e.preventDefault();
+                const email = document.getElementById('forgotPasswordEmail').value;
+                
+                // In a real app, this would send a password reset email
+                this.showToast(`Password reset instructions sent to ${email}`, 'success');
+                this.switchAuthTab('login');
+            }
+
+            socialLogin(provider) {
+                // In a real app, this would integrate with OAuth providers
+                this.showToast(`Signing in with ${provider}...`, 'info');
+                
+                // Simulate successful login
+                setTimeout(() => {
+                    const mockUser = {
+                        id: 'user-social-' + Date.now(),
+                        name: 'Social User',
+                        email: `user@${provider}.com`,
+                        avatar: `https://ui-avatars.com/api/?name=Social+User&background=1E40AF&color=fff`,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    this.currentUser = mockUser;
+                    localStorage.setItem('cyberguard_currentUser', JSON.stringify(mockUser));
+                    this.showDashboard();
+                    this.closeModal(document.getElementById('authModal'));
+                    this.showToast(`Welcome, ${mockUser.name}!`, 'success');
+                }, 1500);
+            }
+
+            handleLogout() {
+                this.currentUser = null;
+                localStorage.removeItem('cyberguard_currentUser');
+                this.showLandingPage();
+                this.showToast('Logged out successfully', 'success');
+            }
+
+            checkAuthStatus() {
+                const savedUser = localStorage.getItem('cyberguard_currentUser');
+                if (savedUser) {
+                    this.currentUser = JSON.parse(savedUser);
+                    this.showDashboard();
+                } else {
+                    this.showLandingPage();
+                }
+            }
+
+            // Settings Methods
+            saveSetting(setting, value) {
+                if (!this.currentUser) return;
+                
+                const settings = JSON.parse(localStorage.getItem('cyberguard_settings') || '{}');
+                settings[this.currentUser.id] = settings[this.currentUser.id] || {};
+                settings[this.currentUser.id][setting] = value;
+                localStorage.setItem('cyberguard_settings', JSON.stringify(settings));
+                
+                this.showToast(`Setting "${setting}" ${value ? 'enabled' : 'disabled'}`, 'success');
+            }
+
+            saveSettings() {
+                if (!this.currentUser) return;
+                
+                const settings = JSON.parse(localStorage.getItem('cyberguard_settings') || '{}');
+                settings[this.currentUser.id] = settings[this.currentUser.id] || {};
+                
+                // Save all toggle switches
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    const setting = toggle.dataset.setting;
+                    const isActive = toggle.classList.contains('active');
+                    settings[this.currentUser.id][setting] = isActive;
+                });
+                
+                localStorage.setItem('cyberguard_settings', JSON.stringify(settings));
+                this.showToast('Settings saved successfully', 'success');
+            }
+
+            resetSettings() {
+                if (!this.currentUser) return;
+                
+                const settings = JSON.parse(localStorage.getItem('cyberguard_settings') || '{}');
+                delete settings[this.currentUser.id];
+                localStorage.setItem('cyberguard_settings', JSON.stringify(settings));
+                
+                // Reset UI
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    if (toggle.dataset.setting === 'darkMode') {
+                        toggle.classList.add('active');
+                    } else {
+                        toggle.classList.remove('active');
+                    }
+                });
+                
+                this.showToast('Settings reset to default', 'success');
+            }
+
+            // Pricing Methods
+            selectPricingPlan(plan) {
+                if (!this.currentUser) {
+                    this.showAuthModal('register');
+                    return;
+                }
+                
+                if (plan === 'enterprise') {
+                    this.showToast('Enterprise plan requires custom pricing. Our sales team will contact you soon.', 'info');
+                    return;
+                }
+                
+                // In a real app, this would process payment
+                this.showToast(`You've selected the ${plan} plan. Redirecting to payment...`, 'info');
+                
+                // Simulate payment processing
+                setTimeout(() => {
+                    this.showToast(`${plan.charAt(0).toUpperCase() + plan.slice(1)} plan activated successfully!`, 'success');
+                }, 2000);
+            }
+
+            // Navigation Methods
+            showLandingPage() {
+                document.getElementById('heroSection').style.display = 'block';
+                document.getElementById('features').style.display = 'block';
+                document.getElementById('dashboard').style.display = 'none';
+                document.querySelectorAll('.page').forEach(page => page.style.display = 'none');
+                document.getElementById('contentPages').style.display = 'none';
+                
+                document.getElementById('authButton').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'none';
+            }
+
+            showDashboard() {
+                document.getElementById('heroSection').style.display = 'none';
+                document.getElementById('features').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.querySelectorAll('.page').forEach(page => page.style.display = 'none');
+                document.getElementById('contentPages').style.display = 'none';
+                
+                document.getElementById('authButton').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'flex';
+                document.getElementById('userName').textContent = this.currentUser.name;
+                document.getElementById('userAvatar').innerHTML = `<i class="fas fa-user-shield"></i>`;
+                
+                this.loadDashboardData();
+            }
+
+            showFeaturesPage() {
+                this.hideAllPages();
+                document.getElementById('featuresPage').style.display = 'block';
+                document.getElementById('contentPages').style.display = 'block';
+            }
+
+            showPricingPage() {
+                this.hideAllPages();
+                document.getElementById('pricingPage').style.display = 'block';
+                document.getElementById('contentPages').style.display = 'block';
+            }
+
+            showAboutPage() {
+                this.hideAllPages();
+                document.getElementById('aboutPage').style.display = 'block';
+                document.getElementById('contentPages').style.display = 'block';
+            }
+
+            showContactPage() {
+                this.hideAllPages();
+                document.getElementById('contactPage').style.display = 'block';
+                document.getElementById('contentPages').style.display = 'block';
+            }
+
+            showAdvancedScan() {
+                this.hideAllPages();
+                document.getElementById('advancedScanPage').style.display = 'block';
+            }
+
+            showReports() {
+                this.hideAllPages();
+                document.getElementById('reportsPage').style.display = 'block';
+                this.loadUserReports();
+            }
+
+            showScanHistory() {
+                this.hideAllPages();
+                document.getElementById('scanHistoryPage').style.display = 'block';
+                this.loadScanHistory();
+            }
+
+            showSettings() {
+                this.hideAllPages();
+                document.getElementById('settingsPage').style.display = 'block';
+                this.loadSettings();
+            }
+
+            loadSettings() {
+                if (!this.currentUser) return;
+                
+                const settings = JSON.parse(localStorage.getItem('cyberguard_settings') || '{}');
+                const userSettings = settings[this.currentUser.id] || {};
+                
+                // Update toggle switches based on saved settings
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    const setting = toggle.dataset.setting;
+                    const isActive = userSettings[setting] !== undefined ? userSettings[setting] : true;
+                    
+                    if (isActive) {
+                        toggle.classList.add('active');
+                    } else {
+                        toggle.classList.remove('active');
+                    }
+                });
+            }
+
+            hideAllPages() {
+                document.getElementById('heroSection').style.display = 'none';
+                document.getElementById('features').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'none';
+                document.querySelectorAll('.page').forEach(page => page.style.display = 'none');
+                document.getElementById('contentPages').style.display = 'none';
+            }
+
+            toggleMobileMenu() {
+                const navLinks = document.getElementById('navLinks');
+                navLinks.classList.toggle('active');
+            }
+
+            // Scan Methods
+            startQuickScan() {
+                const modal = document.getElementById('quickScanModal');
+                this.showModal(modal);
+            }
+
+            executeQuickScan() {
+                const url = document.getElementById('quickScanUrl').value;
+                if (!url) {
+                    this.showToast('Please enter a target URL', 'error');
+                    return;
+                }
+
+                // Hide form and show progress
+                document.querySelector('.form-group').style.display = 'none';
+                document.querySelector('.form-actions').style.display = 'none';
+                document.querySelector('.scan-progress').style.display = 'block';
+                document.querySelector('.scan-results').style.display = 'none';
+
+                this.simulateQuickScanProgress(url);
+            }
+
+            simulateQuickScanProgress(url) {
+                const progressBar = document.querySelector('.progress-fill');
+                const progressText = document.querySelector('.progress-text');
+                let progress = 0;
+
+                const interval = setInterval(() => {
+                    progress += 25;
+                    progressBar.style.width = `${progress}%`;
+                    
+                    const stages = [
+                        'Initializing scanner...',
+                        'Checking security headers...',
+                        'Scanning for vulnerabilities...',
+                        'Generating report...',
+                        'Scan complete!'
+                    ];
+                    
+                    progressText.textContent = stages[progress / 25];
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            document.querySelector('.scan-progress').style.display = 'none';
+                            document.querySelector('.scan-results').style.display = 'block';
+                            this.createQuickScanReport(url);
+                        }, 500);
+                    }
+                }, 800);
+            }
+
+            createQuickScanReport(url) {
+                const reports = JSON.parse(localStorage.getItem('cyberguard_reports') || '[]');
+                const scanId = 'scan-' + Date.now();
+                
+                const report = {
+                    id: 'report-' + Date.now(),
+                    scanId: scanId,
+                    userId: this.currentUser.id,
+                    url: url,
+                    scanType: 'quick',
+                    vulnerabilities: [
+                        {
+                            id: 'vuln-' + Date.now(),
+                            name: 'Security Headers Missing',
+                            severity: 'low',
+                            description: 'Basic security headers like Content-Security-Policy are not implemented',
+                            solution: 'Configure security headers in server configuration',
+                            cvss: 4.5,
+                            location: url
+                        }
+                    ],
+                    scanDate: new Date().toISOString(),
+                    reportDate: new Date().toISOString()
+                };
+                
+                reports.push(report);
+                localStorage.setItem('cyberguard_reports', JSON.stringify(reports));
+                
+                // Update scans
+                const scans = JSON.parse(localStorage.getItem('cyberguard_scans') || '[]');
+                scans.push({
+                    id: scanId,
+                    userId: this.currentUser.id,
+                    url: url,
+                    scanType: 'quick',
+                    status: 'completed',
+                    progress: 100,
+                    vulnerabilities: report.vulnerabilities,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                });
+                localStorage.setItem('cyberguard_scans', JSON.stringify(scans));
+            }
+
+            async startAdvancedScan() {
+                const url = document.getElementById('targetUrl').value;
+                if (!url) {
+                    this.showToast('Please enter a target URL', 'error');
+                    return;
+                }
+
+                const scanType = document.querySelector('.scan-type-option.active').dataset.type;
+                
+                // Create scan
+                const scanId = 'scan-' + Date.now();
+                const scan = {
+                    id: scanId,
+                    userId: this.currentUser.id,
+                    url,
+                    scanType,
+                    status: 'running',
+                    progress: 0,
+                    vulnerabilities: [],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                const scans = JSON.parse(localStorage.getItem('cyberguard_scans') || '[]');
+                scans.push(scan);
+                localStorage.setItem('cyberguard_scans', JSON.stringify(scans));
+
+                this.showDashboard();
+                this.showToast('Advanced scan started successfully!', 'success');
+                this.simulateAdvancedScan(scanId);
+            }
+
+            simulateAdvancedScan(scanId) {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    
+                    const scans = JSON.parse(localStorage.getItem('cyberguard_scans') || '[]');
+                    const scan = scans.find(s => s.id === scanId);
+                    
+                    if (scan) {
+                        scan.progress = progress;
+                        scan.updatedAt = new Date().toISOString();
+                        
+                        if (progress >= 100) {
+                            scan.status = 'completed';
+                            scan.progress = 100;
+                            
+                            // Generate vulnerabilities
+                            scan.vulnerabilities = this.generateVulnerabilities(scan.url, scan.scanType);
+                            
+                            // Create report
+                            const reports = JSON.parse(localStorage.getItem('cyberguard_reports') || '[]');
+                            const report = {
+                                id: 'report-' + Date.now(),
+                                scanId: scan.id,
+                                userId: scan.userId,
+                                url: scan.url,
+                                scanType: scan.scanType,
+                                vulnerabilities: scan.vulnerabilities,
+                                scanDate: scan.createdAt,
+                                reportDate: new Date().toISOString()
+                            };
+                            reports.push(report);
+                            localStorage.setItem('cyberguard_reports', JSON.stringify(reports));
+                            
+                            clearInterval(interval);
+                            this.showToast('Scan completed! Report generated.', 'success');
+                        }
+                        
+                        localStorage.setItem('cyberguard_scans', JSON.stringify(scans));
+                        this.loadUserScans();
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 1000);
+            }
+
+            generateVulnerabilities(url, scanType) {
+                const vulnerabilities = [];
+                const vulnTypes = [
+                    {
+                        name: 'SQL Injection',
+                        severity: 'high',
+                        description: 'SQL injection vulnerability detected in form parameters',
+                        solution: 'Use parameterized queries or prepared statements',
+                        cvss: 8.5
+                    },
+                    {
+                        name: 'Cross-Site Scripting (XSS)',
+                        severity: 'medium',
+                        description: 'Reflected XSS vulnerability found in search functionality',
+                        solution: 'Implement proper input sanitization and output encoding',
+                        cvss: 6.8
+                    },
+                    {
+                        name: 'Cross-Site Request Forgery (CSRF)',
+                        severity: 'medium',
+                        description: 'CSRF protection missing in form submissions',
+                        solution: 'Implement CSRF tokens in all state-changing requests',
+                        cvss: 7.2
+                    },
+                    {
+                        name: 'Security Headers Missing',
+                        severity: 'low',
+                        description: 'Important security headers like CSP, HSTS are not implemented',
+                        solution: 'Configure security headers in server configuration',
+                        cvss: 4.5
+                    }
+                ];
+
+                const count = scanType === 'quick' ? 1 : scanType === 'standard' ? 2 : 3;
+                
+                for (let i = 0; i < count; i++) {
+                    const randomIndex = Math.floor(Math.random() * vulnTypes.length);
+                    vulnerabilities.push({
+                        ...vulnTypes[randomIndex],
+                        id: 'vuln-' + Date.now() + '-' + i,
+                        location: `${url}/api/endpoint${i + 1}`
+                    });
+                }
+
+                return vulnerabilities;
+            }
+
+            // Data Loading Methods
+            async loadUserScans() {
+                try {
+                    const scans = JSON.parse(localStorage.getItem('cyberguard_scans') || '[]');
+                    const userScans = scans.filter(scan => scan.userId === this.currentUser.id);
+                    
+                    this.updateScansList(userScans);
+                    this.updateDashboardStats(userScans);
+                } catch (error) {
+                    console.error('Failed to load scans:', error);
+                }
+            }
+
+            async loadUserReports() {
+                try {
+                    const reports = JSON.parse(localStorage.getItem('cyberguard_reports') || '[]');
+                    const userReports = reports.filter(report => report.userId === this.currentUser.id);
+                    
+                    this.updateReportsList(userReports);
+                } catch (error) {
+                    console.error('Failed to load reports:', error);
+                }
+            }
+
+            async loadScanHistory() {
+                try {
+                    const scans = JSON.parse(localStorage.getItem('cyberguard_scans') || '[]');
+                    const userScans = scans.filter(scan => scan.userId === this.currentUser.id);
+                    
+                    this.updateHistoryList(userScans);
+                } catch (error) {
+                    console.error('Failed to load scan history:', error);
+                }
+            }
+
+            updateScansList(scans) {
+                const container = document.getElementById('scansList');
+                
+                if (scans.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <h3>No Scans Yet</h3>
+                            <p>Start your first security scan to identify vulnerabilities</p>
+                            <button class="btn btn-primary start-scan-btn" onclick="cyberGuardApp.showAdvancedScan()">
+                                <i class="fas fa-play"></i> Start First Scan
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Sort by creation date (newest first)
+                scans.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                // Show only the 5 most recent scans
+                const recentScans = scans.slice(0, 5);
+                
+                container.innerHTML = recentScans.map(scan => {
+                    const criticalCount = scan.vulnerabilities.filter(v => v.severity === 'critical').length;
+                    const highCount = scan.vulnerabilities.filter(v => v.severity === 'high').length;
+                    const mediumCount = scan.vulnerabilities.filter(v => v.severity === 'medium').length;
+                    const lowCount = scan.vulnerabilities.filter(v => v.severity === 'low').length;
+                    
+                    return `
+                        <div class="scan-item">
+                            <div class="scan-header">
+                                <div class="scan-url">${scan.url}</div>
+                                <div class="scan-status">
+                                    <span class="status-badge ${scan.status}">${scan.status}</span>
+                                </div>
+                            </div>
+                            <div class="scan-meta">
+                                <span>${scan.scanType}</span>
+                                <span>${new Date(scan.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <div class="scan-progress-bar">
+                                <div class="scan-progress-fill" style="width: ${scan.progress}%"></div>
+                            </div>
+                            <div class="scan-vulnerabilities">
+                                ${criticalCount > 0 ? `<span class="vuln-badge critical">${criticalCount} Critical</span>` : ''}
+                                ${highCount > 0 ? `<span class="vuln-badge high">${highCount} High</span>` : ''}
+                                ${mediumCount > 0 ? `<span class="vuln-badge medium">${mediumCount} Medium</span>` : ''}
+                                ${lowCount > 0 ? `<span class="vuln-badge low">${lowCount} Low</span>` : ''}
+                            </div>
+                            <div class="scan-actions">
+                                <button class="btn btn-outline" onclick="cyberGuardApp.viewScan('${scan.id}')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                ${scan.status === 'completed' ? `
+                                    <button class="btn btn-outline" onclick="cyberGuardApp.viewReportByScanId('${scan.id}')">
+                                        <i class="fas fa-file-alt"></i> Report
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateReportsList(reports) {
+                const container = document.getElementById('reportsList');
+                
+                if (reports.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-file-alt"></i>
+                            <h3>No Reports Available</h3>
+                            <p>Complete a security scan to generate reports</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Sort by report date (newest first)
+                reports.sort((a, b) => new Date(b.reportDate) - new Date(a.reportDate));
+                
+                container.innerHTML = reports.map(report => {
+                    const criticalCount = report.vulnerabilities.filter(v => v.severity === 'critical').length;
+                    const highCount = report.vulnerabilities.filter(v => v.severity === 'high').length;
+                    const mediumCount = report.vulnerabilities.filter(v => v.severity === 'medium').length;
+                    const lowCount = report.vulnerabilities.filter(v => v.severity === 'low').length;
+                    
+                    return `
+                        <div class="report-item">
+                            <div class="report-header">
+                                <h3>${report.url}</h3>
+                                <span class="report-date">${new Date(report.reportDate).toLocaleDateString()}</span>
+                            </div>
+                            <div class="report-summary">
+                                <div class="vuln-count critical">${criticalCount} Critical</div>
+                                <div class="vuln-count high">${highCount} High</div>
+                                <div class="vuln-count medium">${mediumCount} Medium</div>
+                                <div class="vuln-count low">${lowCount} Low</div>
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn btn-primary" onclick="cyberGuardApp.viewReport('${report.id}')">
+                                    <i class="fas fa-chart-bar"></i> View Report
+                                </button>
+                                <button class="btn btn-outline" onclick="cyberGuardApp.downloadReport('${report.id}')">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateHistoryList(scans) {
+                const container = document.getElementById('historyList');
+                
+                if (scans.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-history"></i>
+                            <h3>No Scan History</h3>
+                            <p>Start your first security scan to build history</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Sort by creation date (newest first)
+                scans.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                container.innerHTML = scans.map(scan => {
+                    const criticalCount = scan.vulnerabilities.filter(v => v.severity === 'critical').length;
+                    const highCount = scan.vulnerabilities.filter(v => v.severity === 'high').length;
+                    const mediumCount = scan.vulnerabilities.filter(v => v.severity === 'medium').length;
+                    const lowCount = scan.vulnerabilities.filter(v => v.severity === 'low').length;
+                    
+                    return `
+                        <div class="report-item">
+                            <div class="report-header">
+                                <h3>${scan.url}</h3>
+                                <span class="report-date">${new Date(scan.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <div class="report-summary">
+                                <div class="vuln-count critical">${criticalCount} Critical</div>
+                                <div class="vuln-count high">${highCount} High</div>
+                                <div class="vuln-count medium">${mediumCount} Medium</div>
+                                <div class="vuln-count low">${lowCount} Low</div>
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn btn-primary" onclick="cyberGuardApp.viewScan('${scan.id}')">
+                                    <i class="fas fa-chart-bar"></i> View Details
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateDashboardStats(scans) {
+                const completedScans = scans.filter(s => s.status === 'completed').length;
+                const totalVulnerabilities = scans.reduce((total, scan) => total + scan.vulnerabilities.length, 0);
+                const uniqueSites = new Set(scans.map(s => s.url)).size;
+                const successRate = scans.length > 0 ? Math.round((completedScans / scans.length) * 100) : 0;
+
+                document.getElementById('totalScans').textContent = scans.length;
+                document.getElementById('vulnerabilitiesFound').textContent = totalVulnerabilities;
+                document.getElementById('sitesMonitored').textContent = uniqueSites;
+                document.getElementById('scanSuccessRate').textContent = `${successRate}%`;
+            }
+
+            // Modal Methods
+            showModal(modal) {
+                modal.style.display = 'flex';
+            }
+
+            closeModal(modal) {
+                modal.style.display = 'none';
+                
+                // Reset quick scan modal
+                if (modal.id === 'quickScanModal') {
+                    document.querySelector('.form-group').style.display = 'block';
+                    document.querySelector('.form-actions').style.display = 'flex';
+                    document.querySelector('.scan-progress').style.display = 'none';
+                    document.querySelector('.scan-results').style.display = 'none';
+                    document.querySelector('.progress-fill').style.width = '0%';
+                    document.querySelector('.progress-text').textContent = 'Initializing...';
+                }
+            }
+
+            toggleAuthModal() {
+                const modal = document.getElementById('authModal');
+                if (modal.style.display === 'flex') {
+                    this.closeModal(modal);
+                } else {
+                    this.showModal(modal);
+                }
+            }
+
+            showAuthModal(tab) {
+                this.showModal(document.getElementById('authModal'));
+                this.switchAuthTab(tab);
+            }
+
+            switchAuthTab(tabName) {
+                // Update tab buttons
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === tabName);
+                });
+
+                // Update tab content
+                document.querySelectorAll('.auth-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.id === `${tabName}Tab`);
+                });
+            }
+
+            // Report Methods
+            viewReport(reportId) {
+                const reports = JSON.parse(localStorage.getItem('cyberguard_reports') || '[]');
+                const report = reports.find(r => r.id === reportId);
+                
+                if (report) {
+                    this.currentReportId = reportId;
+                    this.showReportDetail(report);
+                }
+            }
+
+            viewReportByScanId(scanId) {
+                const reports = JSON.parse(localStorage.getItem('cyberguard_reports') || '[]');
+                const report = reports.find(r => r.scanId === scanId);
+                
+                if (report) {
+                    this.viewReport(report.id);
+                } else {
+                    this.showToast('Report not found for this scan', 'error');
+                }
+            }
+
+            showReportDetail(report) {
+                this.hideAllPages();
+                document.getElementById('reportDetailPage').style.display = 'block';
+                
+                // Populate report data
+                document.getElementById('reportTitle').textContent = `Security Report - ${report.url}`;
+                document.getElementById('reportUrl').textContent = report.url;
+                document.getElementById('reportDate').textContent = new Date(report.reportDate).toLocaleDateString();
+                document.getElementById('reportDuration').textContent = '15 minutes';
+                
+                // Calculate vulnerability counts
+                const criticalCount = report.vulnerabilities.filter(v => v.severity === 'critical').length;
+                const highCount = report.vulnerabilities.filter(v => v.severity === 'high').length;
+                const mediumCount = report.vulnerabilities.filter(v => v.severity === 'medium').length;
+                const lowCount = report.vulnerabilities.filter(v => v.severity === 'low').length;
+                
+                document.getElementById('criticalCount').textContent = criticalCount;
+                document.getElementById('highCount').textContent = highCount;
+                document.getElementById('mediumCount').textContent = mediumCount;
+                document.getElementById('lowCount').textContent = lowCount;
+                
+                // Populate vulnerabilities
+                const container = document.getElementById('vulnerabilitiesContainer');
+                container.innerHTML = report.vulnerabilities.map(vuln => `
+                    <div class="vulnerability-item">
+                        <div class="vulnerability-header">
+                            <h4>${vuln.name}</h4>
+                            <span class="vulnerability-severity severity-${vuln.severity}">
+                                ${vuln.severity.toUpperCase()}
+                            </span>
+                        </div>
+                        <div class="vulnerability-description">
+                            ${vuln.description}
+                        </div>
+                        <div class="vulnerability-solution">
+                            <h4>Solution</h4>
+                            <p>${vuln.solution}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            downloadReport(reportId) {
+                const reports = JSON.parse(localStorage.getItem('cyberguard_reports') || '[]');
+                const report = reports.find(r => r.id === reportId);
+                
+                if (report) {
+                    this.showDownloadModal(report);
+                }
+            }
+
+            downloadCurrentReport() {
+                if (this.currentReportId) {
+                    this.downloadReport(this.currentReportId);
+                }
+            }
+
+            showDownloadModal(report) {
+                // Populate download modal
+                document.getElementById('orderDate').textContent = new Date().toLocaleDateString();
+                document.getElementById('orderCustomer').textContent = this.currentUser.name;
+                document.getElementById('orderUrl').textContent = report.url;
+                document.getElementById('orderScanType').textContent = report.scanType.charAt(0).toUpperCase() + report.scanType.slice(1);
+                document.getElementById('reportNumber').textContent = report.id.slice(-3);
+                
+                // Set default filename with proper format
+                const domain = report.url.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+                const scanType = report.scanType;
+                const date = new Date().toISOString().split('T')[0];
+                const defaultName = `security_scan_${domain}_${scanType}_${date}`;
+                document.getElementById('downloadFileName').value = defaultName;
+                
+                this.showModal(document.getElementById('downloadModal'));
+            }
+
+            confirmDownload() {
+                const fileName = document.getElementById('downloadFileName').value;
+                const reports = JSON.parse(localStorage.getItem('cyberguard_reports') || '[]');
+                const report = reports.find(r => r.id === this.currentReportId);
+                
+                if (!report) return;
+                
+                this.generatePDF(report, fileName);
+                this.closeModal(document.getElementById('downloadModal'));
+                this.showToast('Report downloaded successfully!', 'success');
+            }
+
+            generatePDF(report, fileName) {
+                // Check if jsPDF is available
+                if (typeof window.jspdf === 'undefined') {
+                    this.showToast('PDF generation library not loaded. Please try again.', 'error');
+                    console.error('jsPDF library not found');
+                    return;
+                }
+
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    
+                    // Set document properties
+                    doc.setProperties({
+                        title: `Security Report - ${report.url}`,
+                        subject: 'Security Vulnerability Assessment',
+                        author: 'Cyber Scan Security',
+                        keywords: 'security, vulnerability, scan, report',
+                        creator: 'Cyber Scan Security Scanner'
+                    });
+
+                    // Add header
+                    doc.setFillColor(30, 64, 175);
+                    doc.rect(0, 0, 210, 30, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(20);
+                    doc.text('CYBER SCAN SECURITY', 105, 20, { align: 'center' });
+                    
+                    // Add title
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(16);
+                    doc.text('SECURITY ASSESSMENT REPORT', 105, 50, { align: 'center' });
+                    
+                    // Add report details
+                    doc.setFontSize(12);
+                    let yPosition = 70;
+                    
+                    // Report metadata
+                    doc.text(`Report ID: ${report.id}`, 20, yPosition);
+                    yPosition += 10;
+                    doc.text(`Target URL: ${report.url}`, 20, yPosition);
+                    yPosition += 10;
+                    doc.text(`Scan Type: ${report.scanType.toUpperCase()}`, 20, yPosition);
+                    yPosition += 10;
+                    doc.text(`Scan Date: ${new Date(report.scanDate).toLocaleDateString()}`, 20, yPosition);
+                    yPosition += 10;
+                    doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 20, yPosition);
+                    yPosition += 15;
+                    
+                    // Vulnerability summary
+                    const criticalCount = report.vulnerabilities.filter(v => v.severity === 'critical').length;
+                    const highCount = report.vulnerabilities.filter(v => v.severity === 'high').length;
+                    const mediumCount = report.vulnerabilities.filter(v => v.severity === 'medium').length;
+                    const lowCount = report.vulnerabilities.filter(v => v.severity === 'low').length;
+                    
+                    doc.setFontSize(14);
+                    doc.text('VULNERABILITY SUMMARY', 20, yPosition);
+                    yPosition += 10;
+                    
+                    doc.setFontSize(12);
+                    doc.text(`Critical Vulnerabilities: ${criticalCount}`, 30, yPosition);
+                    yPosition += 8;
+                    doc.text(`High Vulnerabilities: ${highCount}`, 30, yPosition);
+                    yPosition += 8;
+                    doc.text(`Medium Vulnerabilities: ${mediumCount}`, 30, yPosition);
+                    yPosition += 8;
+                    doc.text(`Low Vulnerabilities: ${lowCount}`, 30, yPosition);
+                    yPosition += 15;
+                    
+                    // Add vulnerabilities section
+                    if (report.vulnerabilities.length > 0) {
+                        doc.setFontSize(14);
+                        doc.text('DETAILED VULNERABILITIES', 20, yPosition);
+                        yPosition += 10;
+                        
+                        report.vulnerabilities.forEach((vuln, index) => {
+                            // Check if we need a new page
+                            if (yPosition > 250) {
+                                doc.addPage();
+                                yPosition = 20;
+                            }
+                            
+                            doc.setFontSize(12);
+                            doc.setTextColor(0, 0, 0);
+                            doc.text(`${index + 1}. ${vuln.name} (${vuln.severity.toUpperCase()})`, 20, yPosition);
+                            yPosition += 8;
+                            
+                            doc.setFontSize(10);
+                            doc.text(`Description: ${vuln.description}`, 25, yPosition);
+                            yPosition += 6;
+                            doc.text(`Solution: ${vuln.solution}`, 25, yPosition);
+                            yPosition += 6;
+                            doc.text(`CVSS Score: ${vuln.cvss}`, 25, yPosition);
+                            yPosition += 6;
+                            doc.text(`Location: ${vuln.location}`, 25, yPosition);
+                            yPosition += 10;
+                        });
+                    }
+                    
+                    // Save the PDF
+                    doc.save(`${fileName}.pdf`);
+                    
+                } catch (error) {
+                    console.error('PDF generation failed:', error);
+                    this.showToast('Failed to generate PDF. Please try again.', 'error');
+                }
+            }
+
+            // Toast Notification System
+            showToast(message, type = 'info') {
+                // Remove existing toasts
+                const existingToasts = document.querySelectorAll('.toast');
+                existingToasts.forEach(toast => toast.remove());
+                
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `
+                    <div class="toast-content">
+                        <i class="fas fa-${this.getToastIcon(type)}"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                // Animate in
+                setTimeout(() => toast.classList.add('show'), 100);
+                
+                // Remove after delay
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            }
+
+            getToastIcon(type) {
+                const icons = {
+                    success: 'check-circle',
+                    error: 'exclamation-circle',
+                    warning: 'exclamation-triangle',
+                    info: 'info-circle'
+                };
+                return icons[type] || 'info-circle';
+            }
+
+            // Missing methods
+            viewScan(scanId) {
+                const scans = JSON.parse(localStorage.getItem('cyberguard_scans') || '[]');
+                const scan = scans.find(s => s.id === scanId);
+                
+                if (scan) {
+                    // Find corresponding report
+                    const reports = JSON.parse(localStorage.getItem('cyberguard_reports') || '[]');
+                    const report = reports.find(r => r.scanId === scanId);
+                    
+                    if (report) {
+                        this.viewReport(report.id);
+                    } else {
+                        this.showToast('No report found for this scan', 'warning');
+                    }
+                }
+            }
+
+            exportAllReports() {
+                if (!this.currentUser) return;
+                
+                const reports = JSON.parse(localStorage.getItem('cyberguard_reports') || '[]');
+                const userReports = reports.filter(report => report.userId === this.currentUser.id);
+                
+                if (userReports.length === 0) {
+                    this.showToast('No reports available for export', 'warning');
+                    return;
+                }
+                
+                // Create a zip of all reports (simplified - in real app, you'd use a zip library)
+                userReports.forEach((report, index) => {
+                    const fileName = `security_reports_batch_${new Date().toISOString().split('T')[0]}_${index + 1}`;
+                    this.generatePDF(report, fileName);
+                });
+                
+                this.showToast(`Exported ${userReports.length} reports`, 'success');
+            }
+
+            loadDashboardData() {
+                this.loadUserScans();
+                this.loadUserReports();
+            }
+        }
+
+        // Initialize the application
+        const cyberGuardApp = new CyberGuardApp();
+    </script>
+    <script src="server.js"></script>
+    <script src="backend/server.js"></script>
+</body>
+</html>
